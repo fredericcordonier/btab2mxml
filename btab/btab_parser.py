@@ -42,6 +42,7 @@ class BtabParser:
         self.triolet = []
         self.glissando = None
         self.expression = None
+        self.last_header_token = ''
 
     def parse(self):
         token = self.tokenizer.get_next_token()
@@ -63,6 +64,12 @@ class BtabParser:
     def _handle_header_token(self, token):
         if isinstance(token, CopyrightToken):
             self.score.metadata.copyright = f'Translation copyright: {token.get_value()}'
+        elif isinstance(token, TitleToken):
+            self.score.metadata.title = token.get_value()
+        elif (len(self.last_header_token) > 0) and token.get_value() == 'By Rush':
+            self.score.metadata.title = self.last_header_token.strip()
+        else:
+            self.last_header_token = token.get_value()
 
     def _handle_token(self, token):
         if isinstance(token, MeasureBarToken):
@@ -101,7 +108,7 @@ class BtabParser:
             self.current_time_signature = token.get_value()
             ts = music21.meter.TimeSignature(self.current_time_signature)
             ts.implicit = False
-            if ts is not None:
+            if self.current_measure is not None:
                 self.current_measure.insert(ts)
 
         elif isinstance(token, NoteToken):
@@ -318,6 +325,8 @@ class BtabParser:
     def output(self, filename):
         if self.score.metadata.copyright is None:
             logging.warning('Score has no copyright')
+        elif self.score.metadata.title is None:
+            logging.warning('Title not found')
         self.score.insert(self.bass)
         self.score.write('musicxml', fp=filename)
 

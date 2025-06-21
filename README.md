@@ -21,12 +21,14 @@ Make sure you have `pipenv` installed:
 ```bash
 pip install pipenv
 pipenv install --deploy --ignore-pipfile
+```
 
 ## 🐳 Running the script
 
+```bash
 pipenv run python main.py --help
+```
 
----
 
 ## 📝 License
 
@@ -35,7 +37,6 @@ All tablatures included in this project are copyrighted by their original author
 please see inside the files. The conversion to XML should keep the copyright of
 the original author.
 
----
 
 ## 📸 About
 

@@ -16,6 +16,7 @@ class Token:
 
 class EndToken(Token):    default_value = 'End'
 class HeaderLineToken(Token):  pass
+class TitleToken(HeaderLineToken): pass
 class CopyrightToken(HeaderLineToken): pass
 class NoteToken(Token):pass
 class TiedNoteToken(Token): pass

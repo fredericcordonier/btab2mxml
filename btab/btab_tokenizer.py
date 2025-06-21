@@ -42,6 +42,9 @@ class BtabTokenizer:
         if len(line) > 0 and line[0] == ' ':
             self.current_state = self.count_strings
             return HeaderLineToken('')
+        elif len(line) > 0 and 'Rush:' in line:
+            self.reader.consume_line()
+            return TitleToken(line.replace('Rush: ', ''))
         elif len(line) > 0 and 'Transcribed' in line:
             self.reader.consume_line()
             return CopyrightToken(line.replace('Transcribed by', '').strip())

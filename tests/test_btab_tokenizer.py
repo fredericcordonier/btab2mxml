@@ -96,12 +96,32 @@ test_repeat_tokens = [
     (MeasureBarToken, None),
     (RepetionNumberToken, '5'),
 ]
+test_repeat2_tab = """
+    h+Q e  3x E 
+||---------||---
+||*-------*||---
+||*-------*||---
+||--3---0--||-5-
+"""
+test_repeat2_tokens = [
+    (MeasureBarToken, None),
+    (StartRepetitionToken, None),
+    (NoteToken, None),
+    (TieToken, None),
+    (TiedNoteToken, None),
+    (NoteToken, None),
+    (EndRepetitionToken, None),
+    (MeasureBarToken, None),
+    (RepetionNumberToken, '3'),
+    (NoteToken, None),
+]
 test_repeat = [
-    (test_repeat_tab, test_repeat_tokens)
+    (test_repeat_tab, test_repeat_tokens),
+    (test_repeat2_tab, test_repeat2_tokens)
 ]
 
 test_tie_tab = """
-   e+h       Q      +h e+  e 
+   e+h       Q      +h e+  e
 -|---------|-------|-----|---
 -|---------|-------|---7-|---
 -|-0-------|-------|-----|---
@@ -157,6 +177,24 @@ chord = [
     (chord_tab, chord_tokens)
 ]
 
+title_tab = """Rush: A Passage to Bangkok
+From the album 2112 (Mercury Records)
+Copyright 1976 Core Music Publishing
+Music By Lee and Lifeson
+Lyrics by Peart
+"""
+title_tokens = [
+    (TitleToken, 'A Passage to Bangkok'),
+    (HeaderLineToken, None),
+    (HeaderLineToken, None),
+    (HeaderLineToken, None),
+    (HeaderLineToken, None),
+    (HeaderLineToken, None),
+]
+title_test = [
+    (title_tab, title_tokens),
+]
+
 # Mock reader
 class MockReader:
     def __init__(self, header = '', staff_lines=''):
@@ -200,15 +238,18 @@ class TestBtabTokenizer(unittest.TestCase):
         token = tokenizer.get_next_token()
         self.assertIsInstance(token, HeaderLineToken)
 
-    def _test_token(self, test_defs):
+    def _test_token(self, test_defs, header=False):
         for test_def in test_defs:
             tokens = []
-            reader = MockReader(test_header, 
-                                test_def[0])
+            if header:
+                reader = MockReader(test_def[0])
+            else:
+                reader = MockReader(test_header,
+                                    test_def[0])
             tokenizer = BtabTokenizer(reader)
             token = tokenizer.get_next_token()
             while not isinstance(token, EndToken):
-                if isinstance(token, HeaderLineToken) or isinstance(token, NbStringsToken):
+                if (not header) and isinstance(token, HeaderLineToken) or isinstance(token, NbStringsToken):
                     pass
                 else:
                     tokens.append(token)
@@ -243,12 +284,15 @@ class TestBtabTokenizer(unittest.TestCase):
         token = tokenizer.get_next_token()
         self.assertIsInstance(token, EndToken)
 
-    def specific(self):
+    def test_copyright(self):
         reader = MockReader(test_copyright_tab)
         tokenizer = BtabTokenizer(reader)
         token = tokenizer.get_next_token()
         self.assertIsInstance(token, CopyrightToken)
         self.assertEqual(token.get_value(), test_copyright_tokens[0][1])
+
+    def test_title(self):
+        self._test_token(title_test, header=True)
 
 
 if __name__ == '__main__':
