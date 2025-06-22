@@ -1,5 +1,5 @@
 import logging
-from btab.token import *
+from btab2mxml.btab.token import *
 
 class BtabTokenizer:
     durations = 'wWhHqQeEsS'

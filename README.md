@@ -1,43 +1,68 @@
 # btab2mxml
-btab2mxml is a Python script to convert btab (bass tablatures) to musicxml files. Specifically started to convert tablatures provided by the Rush Bass Tablature project (http://www.cygnusproductions.com/rtp/bass/bass.asp).
+
+**btab2mxml** is a Python script that converts bass tablature (`.btab` files) to MusicXML format.  
+Originally created to process tablatures from the [Rush Bass Tablature Project](http://www.cygnusproductions.com/rtp/bass/bass.asp).
 
 ---
 
 ## 🎯 Project Goals
 
-- Convert textual tablatures to MusicXML files
+- Convert textual bass tablatures into valid MusicXML files
+- Preserve musical structure and integrity during conversion
 
 ---
 
+## 🚀 Project Setup (using [Poetry](https://python-poetry.org/))
 
-## 🚀 Project Setup with Pipenv
-
-This project uses **[Pipenv](https://pipenv.pypa.io/en/latest/)** for Python dependency and virtual environment management.
+This project uses **Poetry** for dependency management and virtual environments.
 
 ### ✅ Prerequisites
 
-Make sure you have `pipenv` installed:
+Install Poetry (if not already installed):
 
 ```bash
-pip install pipenv
-pipenv install --deploy --ignore-pipfile
+curl -sSL https://install.python-poetry.org | python3 -
 ```
 
-## 🐳 Running the script
+Optionally, configure Poetry to place virtual environments inside the project folder:
+
+⚠️ This setting is global (affects all your projects), so only use it if you prefer .venv/ in each project.
 
 ```bash
-pipenv run python main.py --help
+poetry config virtualenvs.in-project true
 ```
 
+Then install the project dependencies:
+
+```bash
+poetry install
+```
+
+### ▶️ Running the Script
+
+Use the following command to display available options:
+
+```bash
+poetry run btab2mxml --help
+```
+Or run it directly (once inside the virtual environment):
+
+```bash
+poetry shell
+btab2mxml path/to/your/file.btab
+```
 
 ## 📝 License
+This project is licensed under the GNU GPL v3.
 
-This project is released under the **GNU GPL v3** license.
-All tablatures included in this project are copyrighted by their original author,
-please see inside the files. The conversion to XML should keep the copyright of
-the original author.
-
+⚠️ All tablature files remain the intellectual property of their respective original authors.
+MusicXML conversions are provided for educational and personal use only.
 
 ## 📸 About
+Project created in 2025 by Frédéric Cordonier.
 
-- Project started in 2025 by Frederic Cordonier
+## 🧩 Future ideas (optional section)
+
+Export as musicXML tablatures instead of classic notation
+
+---

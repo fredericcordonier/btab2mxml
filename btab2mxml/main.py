@@ -2,9 +2,9 @@ from argparse import  ArgumentParser
 from pathlib import Path
 import logging
 import traceback
-from btab.btab_reader import BtabReader, BtabReaderBadReadModeException
-from btab.btab_tokenizer import BtabTokenizer, EndToken
-from btab.btab_parser import BtabParser
+from btab2mxml.btab.btab_reader import BtabReader, BtabReaderBadReadModeException
+from btab2mxml.btab.btab_tokenizer import BtabTokenizer, EndToken
+from btab2mxml.btab.btab_parser import BtabParser
 
 
 def normalize_suffix(s):

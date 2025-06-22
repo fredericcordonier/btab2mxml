@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "btab2mxml"
+version = "0.1.0"
+description = ""
+authors = ["Frederic Cordonier <frederic.cordonier67@gmail.com>"]
+readme = "README.md"
+packages = [{include = "btab2mxml"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+music21 = "*"
+
+[tool.poetry.scripts]
+btab2mxml = "btab2mxml.main:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

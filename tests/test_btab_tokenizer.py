@@ -1,8 +1,8 @@
 # test_btab_tokenizer.py
 
 import unittest
-from btab.btab_tokenizer import BtabTokenizer
-from btab.token import *
+from btab2mxml.btab.btab_tokenizer import BtabTokenizer
+from btab2mxml.btab.token import *
 
 test_header = """
 Last Updated 5-8-12
