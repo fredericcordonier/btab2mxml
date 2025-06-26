@@ -17,10 +17,18 @@ class MockChordToken(NoteToken):
     def get_value(self):
         return ['w', '', '7', '0', '']
 
+class MockChordWithGhostToken(NoteToken):
+    def get_value(self):
+        return ['w', '', '7', '0', 'x']
+
 class MockPullOffToken(PullOffToken):
     def get_value(self):
         return ''
     
+class MockGhostNoteToken(NoteToken):
+    def get_value(self):
+        return ['s', '', 'x', '', '']
+
 class MockCopyrightToken(CopyrightToken):
     def get_value(self):
         return 'Test copyright'
@@ -53,6 +61,21 @@ class TestBtabParser(unittest.TestCase):
         self.assertEqual(note.duration.type, 'quarter')
         self.assertEqual(int(note.pitch.ps), 45)
 
+    def test_ghost_note(self):
+        mock_tokenizer = get_tokenzier([
+            MockNbStringsToken(),
+            MeasureBarToken(),
+            MockGhostNoteToken(),
+            EndToken()
+        ])
+        parser = BtabParser(mock_tokenizer)
+        parser.parse()
+        self.assertIsNotNone(parser.current_measure)
+        notes = list(parser.current_measure.notes)
+        self.assertEqual(len(notes), 1)
+        self.assertEqual(notes[0].notehead, 'x')
+
+
     def test_chord(self):
         mock_tokenizer = get_tokenzier([
             MockNbStringsToken(),  # Strings number
@@ -73,6 +96,24 @@ class TestBtabParser(unittest.TestCase):
         self.assertEqual(len(pitches), 2)
         self.assertEqual(int(pitches[0].ps), 57)
         self.assertEqual(int(pitches[1].ps), 45)
+
+        mock_tokenizer = get_tokenzier([
+            MockNbStringsToken(),  # Strings number
+            MeasureBarToken(),     # Start measure
+            MockChordWithGhostToken(),
+            EndToken()
+        ])
+        parser = BtabParser(mock_tokenizer)
+        parser.parse()
+
+        self.assertIsNotNone(parser.current_measure)
+        notes = list(parser.current_measure.notes)
+        self.assertEqual(len(notes), 1)
+        note = notes[0]
+        self.assertIsInstance(note, music21.chord.Chord)
+        self.assertEqual(note.duration.type, 'whole')
+        notes = note.notes
+        self.assertEqual(notes[-1].notehead, 'x')
 
     def test_pull_off(self):
         mock_tokenizer = get_tokenzier([

@@ -6,6 +6,11 @@ class BtabParser_InvalidDurationException(Exception):pass
 class BtabParser_InvalidPitchException(Exception):pass
 
 
+class MyPitch(music21.pitch.Pitch):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.ghost = False
+
 class BtabParser:
     notes_duration = {
             'W': ('whole', 1, 48),
@@ -127,16 +132,22 @@ class BtabParser:
                     try:
                         pitches = [self._get_pitch(p) for p in pitches]
                     except BtabParser_InvalidPitchException:
-                        logging.error(f'Invalid pitch: {symbols}, defaults to C')
-                        pitches = [music21.pitch.Pitch('C')]
+                        logging.error(f'Invalid pitch: {symbols}')
+                        pitches = [MyPitch('C')]
                     inserted = music21.chord.Chord(pitches, duration=duration)
+                    # Handle ghost notes
+                    for n in inserted.notes:
+                        if n.pitch.ghost:
+                            n.notehead = 'x'
                 else:
                     try:
                         pitch = self._get_pitch(symbols[1:])
                     except BtabParser_InvalidPitchException:
-                        logging.error(f'Invalid pitch: {symbols}, defaults to C')
-                        pitch = music21.pitch.Pitch('C')
+                        logging.error(f'Invalid pitch: {symbols}')
+                        pitch = MyPitch('C')
                     inserted = music21.note.Note(pitch=pitch, duration=duration)
+                    if pitch.ghost:
+                        inserted.notehead = 'x'
                 if inserted:
                     self.current_note = inserted
                     if self.glissando:
@@ -311,19 +322,24 @@ class BtabParser:
         if '(' in fret:
             fret = fret.replace('(', '').replace(')', '')
             try:
-                pitch = string_pitch[string] + int(fret)
+                ret = MyPitch(string_pitch[string] + int(fret))
             except ValueError:
                 raise BtabParser_InvalidPitchException
             else:
                 logging.info(f'Appologiatura not supported')
                 raise BtabParser_InvalidPitchException
         else:
-            try:
-                pitch = string_pitch[string] + int(fret)
-            except ValueError:
-                raise BtabParser_InvalidPitchException
-
-        return music21.pitch.Pitch(ps=pitch)
+            # Ghost note:
+            if fret == 'x':
+                ret = MyPitch(ps=string_pitch[string])
+                ret.ghost = True
+            else:
+                try:
+                    ret = MyPitch(ps=string_pitch[string] + int(fret))
+                except ValueError:
+                    raise BtabParser_InvalidPitchException
+        # return music21.pitch.Pitch(ps=pitch)
+        return ret
 
     def output(self, filename):
         if self.score.metadata.copyright is None:

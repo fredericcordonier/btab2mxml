@@ -195,6 +195,26 @@ title_test = [
     (title_tab, title_tokens),
 ]
 
+ghost_tab = """
+   e s e s e s 
+-|---------------
+-|-7-x-5-x-4-x---
+-|---------------
+-|---------------
+"""
+ghost_tokens = [
+    (MeasureBarToken, None),
+    (NoteToken, ['e', '', '7', '', '']),
+    (NoteToken, ['s', '', 'x', '', '']),
+    (NoteToken, ['e', '', '5', '', '']),
+    (NoteToken, ['s', '', 'x', '', '']),
+    (NoteToken, ['e', '', '4', '', '']),
+    (NoteToken, ['s', '', 'x', '', '']),
+]
+ghost_test = [
+    (ghost_tab, ghost_tokens),
+]
+
 # Mock reader
 class MockReader:
     def __init__(self, header = '', staff_lines=''):
@@ -294,6 +314,9 @@ class TestBtabTokenizer(unittest.TestCase):
     def test_title(self):
         self._test_token(title_test, header=True)
 
+
+    def test_mute(self):
+        self._test_token(ghost_test)
 
 if __name__ == '__main__':
     unittest.main()
