@@ -33,6 +33,7 @@ class BtabTokenizer:
             else:
                 token = self.current_state()
 
+        logging.debug(f'btab_tokenizer: sending token {str(token)}')
         return token
 
     def header(self):

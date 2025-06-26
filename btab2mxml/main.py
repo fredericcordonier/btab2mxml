@@ -23,7 +23,10 @@ def parse_args():
 
 def setup_logging(verbose: bool, logfile='app.log'):
     logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
+    if verbose:
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
      # Handler fichier (tout)

@@ -1,4 +1,4 @@
-
+import logging
 
 class BtabReaderBadReadModeException(Exception):
     pass
@@ -13,6 +13,7 @@ class BtabReader:
         self.staff_line_index = 0
         self.staff_line_length = 0
         self.staff_lines = [[]]
+        self.line_nb = 1
 
     def read_line(self):
         if len(self.buffer) == 0:
@@ -21,6 +22,8 @@ class BtabReader:
             self.end_of_file = True
             return ''
         self.buffer = self.buffer.replace('\n', '')
+        logging.debug(f'btab_reader: read line nb {self.line_nb}')
+        self.line_nb += 1
         return self.buffer
 
     def consume_line(self):

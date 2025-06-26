@@ -83,9 +83,7 @@ class BtabParser:
                 if round(total_duration, 4) != self._get_measure_duration() / 8:
                     logging.warning(f'Duration of measure {self.measure_nb}: {total_duration},' \
                                     f' time signature is {self.current_time_signature}')
-                self.bass.append(self.current_measure)
-                self.empty_measure = True
-                self.measure_nb += 1
+                self._add_measure()
             self.current_measure = music21.stream.Measure(self.measure_nb)
             self.measure_duration = self._get_measure_duration()
 
@@ -211,10 +209,8 @@ class BtabParser:
             self.current_measure.insert(self.current_measure.highestTime, repeat_text)
 
             self.current_measure.rightBarline = music21.bar.Repeat(direction='end')
-            self.bass.append(self.current_measure)
+            self._add_measure()
             self.current_measure = music21.stream.Measure(self.measure_nb)
-            self.empty_measure = True
-            self.measure_nb += 1
 
 
         elif isinstance(token, TrioletToken):
@@ -236,6 +232,13 @@ class BtabParser:
                 text.style.fontSize = 8
                 text.style.fontStyle = 'italic'
                 self.current_measure.insert(self.current_note.offset, text)
+
+    def _add_measure(self):
+            self.bass.append(self.current_measure)
+            self.current_measure = music21.stream.Measure(self.measure_nb)
+            self.empty_measure = True
+            logging.debug(f'btab_parser: add measure {self.measure_nb}')
+            self.measure_nb += 1
 
     def _add_glissando(self, note_from, note_to):
         a = music21.spanner.Glissando([note_from, note_to])
