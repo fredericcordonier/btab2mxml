@@ -115,9 +115,30 @@ test_repeat2_tokens = [
     (RepetionNumberToken, '3'),
     (NoteToken, None),
 ]
+test_repeat3_tab = """
+   w 37   E   7
++------+-------+-
+|*-R--*|*-----*|-
+|*----*|*-3---*|-
++------+-------+-
+"""
+test_repeat3_tokens = [
+    (MeasureBarToken, None),
+    (StartRepetitionToken, None),
+    (RestToken, 'w'),
+    (EndRepetitionToken, None),
+    (MeasureBarToken, None),
+    (RepetionNumberToken, '37'),
+    (StartRepetitionToken, None),
+    (NoteToken, ['E', '', '', '3', '']),
+    (EndRepetitionToken, None),
+    (MeasureBarToken, None),
+    (RepetionNumberToken, '7')
+]
 test_repeat = [
     (test_repeat_tab, test_repeat_tokens),
-    (test_repeat2_tab, test_repeat2_tokens)
+    (test_repeat2_tab, test_repeat2_tokens),
+    (test_repeat3_tab, test_repeat3_tokens)
 ]
 
 test_tie_tab = """

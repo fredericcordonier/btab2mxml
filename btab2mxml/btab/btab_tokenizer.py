@@ -7,6 +7,7 @@ class BtabTokenizer:
     '\\': GlissDownToken,
     'H': HammerOnToken,
     'h': HammerOnToken,
+    'P': PullOffToken,
     'p': PullOffToken,
     '/': GlissUpToken,
     '^': BendToken,
@@ -78,6 +79,7 @@ class BtabTokenizer:
         self.symbol_buffer = []
         self.token_buffer.append(MeasureBarToken())
         end_symbol = False
+        post_token = None
         while not end_symbol:
             symbol = self.reader.get_next_score_symbol()
             if symbol is None or len(symbol) == 0:
@@ -89,15 +91,20 @@ class BtabTokenizer:
                 header_buf += header
                 if (frets == '||||') or (frets == '+||+') or (frets == '-|||'):
                     end_symbol = False
-                    if len(header_buf) > 0:
-                        self.token_buffer.append(RepetionNumberToken(header_buf.replace('x', '')))
                 elif (frets == '-' * self.nb_strings) and (len(header) == 0):
                     end_symbol = True
                 elif '**' in frets:
-                    self.token_buffer.append(StartRepetitionToken())
-                else:
+                    post_token = StartRepetitionToken()
                     end_symbol = True
+                else:
                     self.symbol_buffer.append(symbol)
+                    end_symbol = True
+        if len(header_buf) > 0:
+            potential_repeat = ''.join([s for s in header_buf if s.isdigit()])
+            if potential_repeat:
+                self.token_buffer.append(RepetionNumberToken(potential_repeat))
+        if post_token:
+            self.token_buffer.append(post_token)
 
     def _get_next_symbol(self):
         if len(self.symbol_buffer) > 0:
@@ -179,6 +186,10 @@ class BtabTokenizer:
             self.frets_buffer = []
         elif '**' in strings:
             self.token_buffer.append(EndRepetitionToken())
+            self.frets_buffer.append(symbol)
+            header = ''.join(s[0] for s in self.frets_buffer if s[0].isdigit())
+            self._consume_measure(header, strings)
+            self.frets_buffer = []
         elif len(paths) > 0:
             self._send_symbol()
             self.token_buffer.append(BtabTokenizer.note_paths[paths[0]]())
