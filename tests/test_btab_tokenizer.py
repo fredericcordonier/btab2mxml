@@ -148,10 +148,10 @@ test_tie = [
 
 rest1_tab = \
 "  q e q \n" \
-"|-------\n" \
+"+-------\n" \
 "|---R---\n" \
 "|-3---3-\n" \
-"|-------\n"
+"+-------\n"
 rest1_tokens = [
     (MeasureBarToken, None),
     (NoteToken, ['q', '', '', '3', '']),

@@ -59,8 +59,8 @@ class BtabTokenizer:
         symbol = self.reader.get_next_score_symbol()
         while symbol is not None and len(symbol) != 0:
             self.symbol_buffer.append(symbol)
-            if '|' in symbol:
-                self.nb_strings = symbol.count('|')
+            if '|' in symbol or '+' in symbol:
+                self.nb_strings = symbol.count('|') + symbol.count('+')
                 self.token_buffer.append(NbStringsToken(self.nb_strings))
                 self.current_state = self.score
                 return
