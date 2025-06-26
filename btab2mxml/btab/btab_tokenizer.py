@@ -9,6 +9,7 @@ class BtabTokenizer:
     'h': HammerOnToken,
     'p': PullOffToken,
     '/': GlissUpToken,
+    '^': BendToken,
     }
 
     def __init__(self, reader):

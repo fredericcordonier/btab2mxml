@@ -230,6 +230,11 @@ class BtabParser:
         elif isinstance(token, GlissDownToken) or isinstance(token, GlissUpToken):
             self.glissando = self.current_note
 
+        elif isinstance(token, BendToken):
+            bend = music21.expressions.TextExpression('~')
+            bend.placement = 'above'  # place it above the note
+            self.current_measure.insert(self.current_note.offset, bend)
+
         elif isinstance(token, NbStringsToken):
             self.nb_strings = token.get_value()
 

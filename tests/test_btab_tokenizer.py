@@ -276,6 +276,23 @@ ghost_test = [
     (ghost_tab, ghost_tokens),
 ]
 
+bend_tab = \
+"    s s  s  \n" \
+"-|----------\n" \
+"-|--5-6^-5--\n" \
+"-|----------\n" \
+"-|----------\n"
+bend_tokens = [
+    (MeasureBarToken, None),
+    (NoteToken, ['s', '', '5', '', '']),
+    (NoteToken, ['s', '', '6', '', '']),
+    (BendToken, None),
+    (NoteToken, ['s', '', '5', '', '']),
+]
+bend_test = [
+    (bend_tab, bend_tokens),
+]
+
 # Mock reader
 class MockReader:
     def __init__(self, header = '', staff_lines=''):
@@ -386,6 +403,9 @@ class TestBtabTokenizer(unittest.TestCase):
 
     def test_mute(self):
         self._test_token(ghost_test)
+
+    def test_bend(self):
+        self._test_token(bend_test)
 
 if __name__ == '__main__':
     unittest.main()

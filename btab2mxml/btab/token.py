@@ -49,3 +49,4 @@ class GlissDownToken(Token): default_value = 'Glissando'
 class HammerOnToken(Token): default_value = music21.articulations.HammerOn()
 class PullOffToken(Token): default_value = music21.articulations.PullOff()
 class GlissUpToken(Token): default_value = 'Glissando'
+class BendToken(Token): default_value = 'Bend'

@@ -137,6 +137,25 @@ class TestBtabParser(unittest.TestCase):
         self.assertIsNotNone(parser.score.metadata.copyright)
         self.assertEqual(parser.score.metadata.copyright, 'Translation copyright: Test copyright')
 
+    def test_bend(self):
+        mock_tokenizer = get_tokenzier([
+            MockNbStringsToken(),
+            MeasureBarToken(),
+            MockNoteToken(),
+            BendToken(),
+            EndToken()
+        ])
+        parser = BtabParser(mock_tokenizer)
+        parser.parse()
+
+        self.assertIsNotNone(parser.current_measure)
+        notes = list(parser.current_measure.notes)
+        self.assertEqual(len(notes), 1)
+        note = notes[0]
+        expr = [e for e in parser.current_measure.elements if isinstance(e, music21.expressions.TextExpression)]
+        self.assertEqual(len(expr), 1)
+        self.assertEqual(expr[0].content, '~')
+
 class TestBtabParserMeasureOverflow(unittest.TestCase):
     def test_measure_duration_overflow_warning(self):
         # 5 notes 'q0' (quarter notes) = 5 * 1/4 = 1.25 > 1.0 (4/4)
