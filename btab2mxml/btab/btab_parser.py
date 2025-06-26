@@ -152,13 +152,22 @@ class BtabParser:
                     self.current_note = inserted
                     if self.glissando:
                         self._add_glissando(self.glissando, self.current_note)
+                    self.current_measure.append(self.current_note)
                     if self.expression:
                         # Create slur
                         sl = music21.spanner.Slur([self.expression[0], self.current_note])
-                        self.current_note.articulations.append(self.expression[1])
+                        self.current_note.articulations.append(self.expression[1].get_value())
                         self.current_measure.insert(sl)
+
+                        text = music21.expressions.TextExpression("h" if isinstance(self.expression[1], HammerOnToken) else "p")
+                        text.style.alignHorizontal = 'center'
+                        text.placement = 'above'
+                        text.style.defaultY = 100
+                        text.style.fontSize = 8
+                        text.style.fontStyle = 'italic'
+                        self.current_measure.insert(self.current_note.offset, text)
+
                         self.expression = None
-                    self.current_measure.append(self.current_note)
                     self.empty_measure = False
 
         elif isinstance(token, TieToken):
@@ -240,14 +249,7 @@ class BtabParser:
 
         elif isinstance(token, HammerOnToken) or isinstance(token, PullOffToken):
             if self.current_note is not None:
-                self.expression = (self.current_note, token.get_value())
-                text = music21.expressions.TextExpression("h" if isinstance(token, HammerOnToken) else "p")
-                text.style.alignHorizontal = 'center'
-                text.placement = 'above'
-                text.style.defaultY = 100
-                text.style.fontSize = 8
-                text.style.fontStyle = 'italic'
-                self.current_measure.insert(self.current_note.offset, text)
+                self.expression = (self.current_note, token)
 
     def _add_measure(self):
             self.bass.append(self.current_measure)
