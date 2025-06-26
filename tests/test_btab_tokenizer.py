@@ -195,6 +195,48 @@ title_test = [
     (title_tab, title_tokens),
 ]
 
+triplet_tab = """
+   e  e  s^ s^ s^ 
+-|-14-12-11-12-11-
+-|----------------
+-|----------------
+-|----------------
+"""
+triplet_tokens = [
+    (MeasureBarToken, None),
+    (NoteToken, ['e', '14', '', '', '']),
+    (NoteToken, ['e', '12', '', '', '']),
+    (NoteToken, ['s', '11', '', '', '']),
+    (TrioletToken, None),
+    (NoteToken, ['s', '12', '', '', '']),
+    (TrioletToken, None),
+    (NoteToken, ['s', '11', '', '', '']),
+    (TrioletToken, None),
+]
+triplet2_tab = """
+   e  e  s^ s^ s^ 
+-|-14-12-11-12-1\-
+-|----------------
+-|----------------
+-|----------------
+"""
+triplet2_tokens = [
+    (MeasureBarToken, None),
+    (NoteToken, ['e', '14', '', '', '']),
+    (NoteToken, ['e', '12', '', '', '']),
+    (NoteToken, ['s', '11', '', '', '']),
+    (TrioletToken, None),
+    (NoteToken, ['s', '12', '', '', '']),
+    (TrioletToken, None),
+    (NoteToken, ['s', '1', '', '', '']),
+    (GlissDownToken, None),
+    (TrioletToken, None),
+]
+triplet_test = [
+    (triplet_tab, triplet_tokens),
+    (triplet2_tab, triplet2_tokens),
+]
+
 gliss_under_tie_tab = "    e e+  e    \n" \
 r"-|------|------" "\n" \
 r"-|------|------" "\n" \
@@ -271,6 +313,9 @@ class MockReader:
 
 # Test class
 class TestBtabTokenizer(unittest.TestCase):
+    def setUp(self):
+        self.maxDiff = None
+
     def test_header_token(self):
         reader = MockReader(test_header)
         tokenizer = BtabTokenizer(reader)
@@ -333,6 +378,8 @@ class TestBtabTokenizer(unittest.TestCase):
     def test_title(self):
         self._test_token(title_test, header=True)
 
+    def test_triplet(self):
+        self._test_token(triplet_test)
 
     def test_glissando(self):
         self._test_token(gliss_under_tie_test)

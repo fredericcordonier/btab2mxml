@@ -146,9 +146,15 @@ class BtabTokenizer:
             # Then append the tie
             trailer_token = TieToken('Tie')
         elif header == '^':
-            self._send_symbol()
-            self.token_buffer.append(TrioletToken('Triolet'))
+            symbol = symbol.replace('^', ' ')
+            # First consume the potential symbol bufferized
+            if (strings != '-' * self.nb_strings) and (len(paths) == 0):
+                # Bufferize the content of symbol
+                self.frets_buffer.append(symbol)
+                # '^' is is considered as end of symbol, so force symbol treatment below
+                strings = '-' * self.nb_strings
             header = ''
+            trailer_token = TrioletToken('Triolet')
         if (strings == '-' * self.nb_strings):
             if (len(header) == 0):
                 # Pure separator: end of "note"
