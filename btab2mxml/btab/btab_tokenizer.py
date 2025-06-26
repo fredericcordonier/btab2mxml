@@ -120,6 +120,8 @@ class BtabTokenizer:
                 if 'rest' in value:
                     value = ''.join([v for v in value if len(v) > 0]).strip()
                     self.token_buffer.append(LongRestToken(value))
+                elif 'R' in value:
+                    self.token_buffer.append(RestToken(self.frets_buffer))
                 else:
                     self.token_buffer.append(NoteToken(value))
             self.frets_buffer = []

@@ -146,6 +146,22 @@ test_tie = [
     (test_tie_tab, test_tie_tokens),
 ]
 
+rest1_tab = \
+"  q e q \n" \
+"|-------\n" \
+"|---R---\n" \
+"|-3---3-\n" \
+"|-------\n"
+rest1_tokens = [
+    (MeasureBarToken, None),
+    (NoteToken, ['q', '', '', '3', '']),
+    (RestToken, 'e'),
+    (NoteToken, ['q', '', '', '3', '']),
+]
+rest1_test = [
+    (rest1_tab, rest1_tokens),
+]
+
 rest_measures_tab = """
                
 ||---8 mm.--|--
@@ -377,6 +393,7 @@ class TestBtabTokenizer(unittest.TestCase):
         self._test_token(test_tie)
 
     def test_rest(self):
+        self._test_token(rest1_test)
         self._test_token(rest_measures)
 
     def test_end_token(self):
