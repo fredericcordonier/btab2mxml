@@ -134,18 +134,17 @@ class BtabTokenizer:
         header, strings = self._split_symbol(symbol)
         # Here I get the transition paths
         paths = [p for p in BtabTokenizer.note_paths.keys() if p in strings]
+        trailer_token = None
         if header == '+':
+            symbol = symbol.replace('+', ' ')
             # First consume the potential symbol bufferized
-            if strings != '-' * self.nb_strings:
-                # Remove the tie symbol
-                symbol = symbol.replace('+', ' ')
+            if (strings != '-' * self.nb_strings) and (len(paths) == 0):
                 self.frets_buffer.append(symbol)
-            self._send_symbol()
-            header = ' '
-            strings = '-' * self.nb_strings
-            # Then append the tie
-            self.token_buffer.append(TieToken())
+                # '+' is is considered as end of symbol, so force symbol treatment below
+                strings = '-' * self.nb_strings
             header = ''
+            # Then append the tie
+            trailer_token = TieToken('Tie')
         elif header == '^':
             self._send_symbol()
             self.token_buffer.append(TrioletToken('Triolet'))
@@ -176,6 +175,8 @@ class BtabTokenizer:
             self.token_buffer.append(BtabTokenizer.note_paths[paths[0]]())
         else:
             self.frets_buffer.append(symbol)
+        if trailer_token is not None:
+            self.token_buffer.append(trailer_token)
         return None
 
     def end(self):

@@ -195,6 +195,25 @@ title_test = [
     (title_tab, title_tokens),
 ]
 
+gliss_under_tie_tab = "    e e+  e    \n" \
+r"-|------|------" "\n" \
+r"-|------|------" "\n" \
+r"-|--5-5\|------" "\n" \
+r"-|------|------" "\n" \
+r""
+gliss_under_tie_tokens = [
+    (MeasureBarToken, None),
+    (NoteToken, ['e', '', '', '5', '']),
+    (NoteToken, ['e', '', '', '5', '']),
+    (GlissDownToken, None),
+    (TieToken, None),
+    (MeasureBarToken, None),
+    (TiedNoteToken, None)
+]
+gliss_under_tie_test = [
+    (gliss_under_tie_tab, gliss_under_tie_tokens)
+]
+
 ghost_tab = """
    e s e s e s 
 -|---------------
@@ -314,6 +333,9 @@ class TestBtabTokenizer(unittest.TestCase):
     def test_title(self):
         self._test_token(title_test, header=True)
 
+
+    def test_glissando(self):
+        self._test_token(gliss_under_tie_test)
 
     def test_mute(self):
         self._test_token(ghost_test)
