@@ -4,12 +4,12 @@ import unittest
 from btab2mxml.btab.btab_tokenizer import BtabTokenizer
 from btab2mxml.btab.token import *
 
-test_header = """
-Last Updated 5-8-12
+test_header = \
+"Last Updated 5-8-12 \n" \
+"\n" \
+"start\n" \
+"  \n"
 
-start
-    
-"""
 
 test_copyright_tab = """Transcribed by Sean Jones
 """
@@ -20,32 +20,29 @@ test_copyright = [
     (test_copyright_tab, test_copyright_tokens)
 ]
 
-double_measure_bar_tab = """
-   
-||-
-||-
-||-
-||-
-"""
+double_measure_bar_tab = \
+"   \n" \
+"||-\n" \
+"||-\n" \
+"||-\n" \
+"||-\n"
 double_measure_bar_tokens = [
     (MeasureBarToken, None)
 ]
 double_measure_bar = (double_measure_bar_tab, double_measure_bar_tokens)
 
-time_sig_4_4 = """
-     
-|----
-|-4:-
-|-4:-
-|----
-"""
-time_sig_13_8 = """
-      
-|-----
-|-13:-
-|--8:-
-|-----
-"""
+time_sig_4_4 = \
+"     \n" \
+"|----\n" \
+"|-4:-\n" \
+"|-4:-\n" \
+"|----\n"
+time_sig_13_8 = \
+"      \n" \
+"|-----\n" \
+"|-13:-\n" \
+"|--8:-\n" \
+"|-----\n"
 time_sig_tokens_4_4 = [
     (MeasureBarToken, None),
     (TimeSignatureToken, '4/4'),
@@ -60,7 +57,7 @@ test_time_signature = [
 ]
 
 test_notes_tab = """
-    w h q e s h  
+    w h q e s h
 ||----0----------
 ||------2-----10-
 ||--------7------
@@ -80,7 +77,7 @@ test_notes = [
 ]
 
 test_repeat_tab = """
-                 5x        
+                 5x
 -||------||------||--------
 -||*----*||*----*||--------
 -||*----*||*----*||--------
@@ -97,7 +94,7 @@ test_repeat_tokens = [
     (RepetionNumberToken, '5'),
 ]
 test_repeat2_tab = """
-    h+Q e  3x E 
+    h+Q e  3x E
 ||---------||---
 ||*-------*||---
 ||*-------*||---
@@ -183,13 +180,12 @@ rest1_test = [
     (rest1_tab, rest1_tokens),
 ]
 
-rest_measures_tab = """
-               
-||---8 mm.--|--
-||---rest---|--
-||----------|--
-||----------|--
-"""
+rest_measures_tab = \
+"               \n" \
+"||---8 mm.--|--\n" \
+"||---rest---|--\n" \
+"||----------|--\n" \
+"||----------|--\n"
 rest_measures_tokens = [
     (MeasureBarToken, None),
     (LongRestToken, '8'),
@@ -200,7 +196,7 @@ rest_measures = [
 ]
 
 chord_tab = """
-   w   
+   w
 -|-----
 -|-7---
 -|-0---
@@ -233,7 +229,7 @@ title_test = [
 ]
 
 triplet_tab = """
-   e  e  s^ s^ s^ 
+   e  e  s^ s^ s^
 -|-14-12-11-12-11-
 -|----------------
 -|----------------
@@ -251,7 +247,7 @@ triplet_tokens = [
     (TrioletToken, None),
 ]
 triplet2_tab = """
-   e  e  s^ s^ s^ 
+   e  e  s^ s^ s^
 -|-14-12-11-12-1\-
 -|----------------
 -|----------------
@@ -293,13 +289,12 @@ gliss_under_tie_test = [
     (gliss_under_tie_tab, gliss_under_tie_tokens)
 ]
 
-ghost_tab = """
-   e s e s e s 
--|---------------
--|-7-x-5-x-4-x---
--|---------------
--|---------------
-"""
+ghost_tab = \
+"   e s e s e s   \n" \
+"-|---------------\n" \
+"-|-7-x-5-x-4-x---\n" \
+"-|---------------\n" \
+"-|---------------\n"
 ghost_tokens = [
     (MeasureBarToken, None),
     (NoteToken, ['e', '', '7', '', '']),
@@ -340,9 +335,10 @@ class MockReader:
         self.index = 0
         if len(staff_lines) > 0:
             self.staff_lines = [s for s in staff_lines.split('\n') if len(s)>0]
+            self.staff_line_length = max([len(s) for s in self.staff_lines])
+            self.staff_lines = [s.ljust(self.staff_line_length) for s in self.staff_lines]
             self.staff_line_index = 0
             self.staff_line_number = len(self.staff_lines)
-            self.staff_line_length = len(self.staff_lines[0])
         else:
             self.staff_line_index = 0
             self.staff_line_length = 0
@@ -392,7 +388,7 @@ class TestBtabTokenizer(unittest.TestCase):
                 else:
                     tokens.append(token)
                 token = tokenizer.get_next_token()
-            self.assertSequenceEqual([t[0] for t in test_def[1]], 
+            self.assertSequenceEqual([t[0] for t in test_def[1]],
                                 [t.__class__ for t in tokens])
             for test_index in range(len(test_def[1])):
                 if test_def[1][test_index][1] is not None:
